@@ -95,8 +95,8 @@ pub fn create_coupon(
     if percent_off_bps > 10_000 {
         return Err(Error::InvalidInput);
     }
-    if fixed_off < 0 {
-        return Err(Error::InvalidInput);
+    if fixed_off <= 0 {
+        return Err(Error::InvalidAmount);
     }
     let now = env.ledger().timestamp();
     if expires_at > 0 && expires_at <= now {

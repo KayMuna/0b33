@@ -545,6 +545,34 @@ fn coupon_creation_rejects_expiry_at_current_time() {
 }
 
 #[test]
+fn coupon_creation_rejects_zero_fixed_off() {
+    let (env, client, _admin, token) = setup();
+    let merchant = Address::generate(&env);
+    let code = Symbol::new(&env, "ZERO_FIXED");
+
+    let result = client.try_create_coupon(&merchant, &code, &token, &0, &0, &0, &0);
+
+    assert_eq!(
+        result.err().unwrap().unwrap().to_code(),
+        Error::InvalidAmount.to_code()
+    );
+}
+
+#[test]
+fn coupon_creation_rejects_negative_fixed_off() {
+    let (env, client, _admin, token) = setup();
+    let merchant = Address::generate(&env);
+    let code = Symbol::new(&env, "NEG_FIXED");
+
+    let result = client.try_create_coupon(&merchant, &code, &token, &0, &-100, &0, &0);
+
+    assert_eq!(
+        result.err().unwrap().unwrap().to_code(),
+        Error::InvalidAmount.to_code()
+    );
+}
+
+#[test]
 fn multiple_redemption_attempts_in_same_block() {
     let (env, client, _admin, token) = setup();
     let merchant = Address::generate(&env);
